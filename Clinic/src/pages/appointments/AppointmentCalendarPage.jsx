@@ -11,8 +11,8 @@ import { useAuth } from "../../app/providers/AuthProvider";
 const initialAppointmentForm = {
   patientId: "",
   doctorId: "",
-  date: "",
-  time: "",
+  appointmentDate: "",
+  appointmentTime: "",
   status: "scheduled",
   reason: "",
 };
@@ -48,11 +48,12 @@ export function AppointmentCalendarPage() {
       setAppointments(
         (res.items || []).map((a) => ({
           id: a._id,
+          appointmentDate: dayjs(a.appointmentDate).format("YYYY-MM-DD"),
+          appointmentTime: a.appointmentTime,
           patientName: a.patientId?.firstName
             ? `${a.patientId.firstName} ${a.patientId.lastName}`
             : "",
           doctorName: a.doctorId?.userId?.name || "",
-          start: `${dayjs(a.appointmentDate).format("YYYY-MM-DD")} ${a.appointmentTime}`,
           status: a.status,
           raw: a,
         }))
@@ -81,8 +82,8 @@ export function AppointmentCalendarPage() {
     setEditingId(null);
     setFormValues({
       ...initialAppointmentForm,
-      date: dayjs().format("YYYY-MM-DD"),
-      time: "10:00",
+      appointmentDate: dayjs().format("YYYY-MM-DD"),
+      appointmentTime: "10:00",
     });
     setFormOpen(true);
   }
@@ -94,8 +95,8 @@ export function AppointmentCalendarPage() {
     setFormValues({
       patientId: a.patientId?._id || a.patientId,
       doctorId: a.doctorId?._id || a.doctorId,
-      date: dayjs(a.appointmentDate).format("YYYY-MM-DD"),
-      time: a.appointmentTime,
+      appointmentDate: dayjs(a.appointmentDate).format("YYYY-MM-DD"),
+      appointmentTime: a.appointmentTime,
       status: a.status,
       reason: a.reason || "",
     });
@@ -109,8 +110,8 @@ export function AppointmentCalendarPage() {
       const payload = {
         patientId: formValues.patientId,
         doctorId: formValues.doctorId,
-        appointmentDate: dayjs(formValues.date).toDate(),
-        appointmentTime: formValues.time,
+        appointmentDate: dayjs(formValues.appointmentDate).toDate(),
+        appointmentTime: formValues.appointmentTime,
         status: formValues.status,
         reason: formValues.reason || undefined,
       };
@@ -159,7 +160,8 @@ export function AppointmentCalendarPage() {
           )}
           <DataTable
             columns={[
-          { id: "start", label: "Start" },
+              { id: "appointmentDate", label: "Date" },
+              { id: "appointmentTime", label: "Time" },
               { id: "patientName", label: "Patient" },
               { id: "doctorName", label: "Doctor" },
               { id: "status", label: "Status" },
@@ -189,7 +191,7 @@ export function AppointmentCalendarPage() {
         >
           {patients.map((p) => (
             <MenuItem key={p._id} value={p._id}>
-              {p.fullName}
+              {p.firstName} {p.lastName}
             </MenuItem>
           ))}
         </TextField>
@@ -203,15 +205,15 @@ export function AppointmentCalendarPage() {
         >
           {doctors.map((d) => (
             <MenuItem key={d._id} value={d._id}>
-              {d.fullName}
+              {d.userId?.name || d.name}
             </MenuItem>
           ))}
         </TextField>
         <TextField
           label="Date"
           type="date"
-          value={formValues.date}
-          onChange={(e) => setFormValues((f) => ({ ...f, date: e.target.value }))}
+          value={formValues.appointmentDate}
+          onChange={(e) => setFormValues((f) => ({ ...f, appointmentDate: e.target.value }))}
           required
           fullWidth
           InputLabelProps={{ shrink: true }}
@@ -219,8 +221,8 @@ export function AppointmentCalendarPage() {
         <TextField
           label="Time"
           type="time"
-          value={formValues.time}
-          onChange={(e) => setFormValues((f) => ({ ...f, time: e.target.value }))}
+          value={formValues.appointmentTime}
+          onChange={(e) => setFormValues((f) => ({ ...f, appointmentTime: e.target.value }))}
           required
           fullWidth
           InputLabelProps={{ shrink: true }}

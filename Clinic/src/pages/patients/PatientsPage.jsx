@@ -48,7 +48,8 @@ export function PatientsPage() {
       setRows(
         (res.items || []).map((p) => ({
           id: p._id,
-          name: `${p.firstName} ${p.lastName}`,
+          firstName: p.firstName,
+          lastName: p.lastName,
           gender: p.gender,
           age: p.age,
           phone: p.phone,
@@ -186,7 +187,8 @@ export function PatientsPage() {
 
           <DataTable
             columns={[
-              { id: "name", label: "Name" },
+              { id: "firstName", label: "First Name" },
+              { id: "lastName", label: "Last Name" },
               { id: "gender", label: "Gender" },
               { id: "age", label: "Age" },
               { id: "phone", label: "Phone" },
