@@ -1,0 +1,18 @@
+Here are the working login credentials for all four roles, now wired into the seed script:
+
+Admin
+Email: admin@clinic.com
+Password: Admin@12345
+Role: admin
+Doctor
+Email: doctor@clinic.com
+Password: Doctor@12345
+Role: doctor
+Receptionist
+Email: receptionist@clinic.com
+Password: Reception@12345
+Role: receptionist
+Pharmacist
+Email: pharmacist@clinic.com
+Password: Pharmacy@12345
+Role: pharmacist
