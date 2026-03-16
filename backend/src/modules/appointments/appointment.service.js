@@ -31,7 +31,13 @@ const appointmentService = {
     const sort = { appointmentDate: 1, appointmentTime: 1 };
 
     const [items, total] = await Promise.all([
-      Appointment.find(filter).sort(sort).skip(skip).limit(safeLimit).lean(),
+      Appointment.find(filter)
+        .populate("patientId", "firstName lastName")
+        .populate({ path: "doctorId", populate: { path: "userId", select: "name" } })
+        .sort(sort)
+        .skip(skip)
+        .limit(safeLimit)
+        .lean(),
       Appointment.countDocuments(filter),
     ]);
 
@@ -42,18 +48,28 @@ const appointmentService = {
     const startOfDay = dayjs().startOf("day").toDate();
     const endOfDay = dayjs().endOf("day").toDate();
     const filter = buildAppointmentFilter({ doctorId, from: startOfDay, to: endOfDay });
-    const items = await Appointment.find(filter).sort({ appointmentDate: 1, appointmentTime: 1 }).lean();
+    const items = await Appointment.find(filter)
+      .populate("patientId", "firstName lastName")
+      .populate({ path: "doctorId", populate: { path: "userId", select: "name" } })
+      .sort({ appointmentDate: 1, appointmentTime: 1 })
+      .lean();
     return { items };
   },
 
   async getById(id) {
-    const doc = await Appointment.findById(id).lean();
+    const doc = await Appointment.findById(id)
+      .populate("patientId", "firstName lastName")
+      .populate({ path: "doctorId", populate: { path: "userId", select: "name" } })
+      .lean();
     if (!doc) throw new AppError("Appointment not found", 404, "APPOINTMENT_NOT_FOUND");
     return doc;
   },
 
   async update(id, payload) {
-    const doc = await Appointment.findByIdAndUpdate(id, payload, { new: true, runValidators: true }).lean();
+    const doc = await Appointment.findByIdAndUpdate(id, payload, { new: true, runValidators: true })
+      .populate("patientId", "firstName lastName")
+      .populate({ path: "doctorId", populate: { path: "userId", select: "name" } })
+      .lean();
     if (!doc) throw new AppError("Appointment not found", 404, "APPOINTMENT_NOT_FOUND");
     return doc;
   },
