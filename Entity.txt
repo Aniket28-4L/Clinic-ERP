@@ -11,7 +11,7 @@ Role: doctor
 Receptionist
 Email: receptionist@clinic.com
 Password: Reception@12345
-Role: receptionist
+Role: receptionist  
 Pharmacist
 Email: pharmacist@clinic.com
 Password: Pharmacy@12345
