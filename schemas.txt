@@ -1,0 +1,81 @@
+# Clinic ERP Entity Schemas - Single Source of Truth
+
+## User
+- name: string (required, max 120)
+- email: string (required, unique, max 254)
+- password: string (required, backend only)
+- role: enum ["admin", "doctor", "receptionist", "pharmacist"] (required)
+- phone: string (max 30)
+- isActive: boolean (default: true)
+
+## Patient
+- firstName: string (required, max 80)
+- lastName: string (required, max 80)
+- gender: string (max 20)
+- age: number (min 0, max 150)
+- phone: string (max 30)
+- email: string (max 254)
+- bloodGroup: string (max 10)
+- address: string (max 500)
+- allergies: string[] (max 120 per item)
+- medicalHistory: string (max 4000)
+- emergencyContactName: string (max 120)
+- emergencyContactPhone: string (max 30)
+
+## Doctor
+- userId: ObjectId (User, required, unique)
+- specialization: string (required, max 120)
+- experienceYears: number (min 0, max 80)
+- consultationFee: number (min 0)
+- roomNumber: string (max 20)
+- availableDays: string[]
+- availableTimeStart: string (HH:mm format, max 5)
+- availableTimeEnd: string (HH:mm format, max 5)
+
+## Appointment
+- patientId: ObjectId (Patient, required)
+- doctorId: ObjectId (Doctor, required)
+- appointmentDate: Date (required)
+- appointmentTime: string (HH:mm format, required, max 5)
+- reason: string (max 240)
+- status: enum ["scheduled", "completed", "cancelled"] (default: "scheduled")
+- notes: string (max 5000)
+
+## Medicine (Pharmacy)
+- name: string (required, max 160)
+- manufacturer: string (max 160)
+- category: string (max 80)
+- price: number (min 0)
+- stockQuantity: number (min 0)
+- expiryDate: Date
+- reorderLevel: number (min 0)
+
+## Prescription
+- patientId: ObjectId (Patient, required)
+- doctorId: ObjectId (Doctor, required)
+- appointmentId: ObjectId (Appointment)
+- diagnosis: string (max 2000)
+- medicines: array of:
+  - medicineId: ObjectId (Medicine, required)
+  - dosage: string (required, max 80)
+  - frequency: string (required, max 80)
+  - durationDays: number (min 1, max 365)
+  - instructions: string (max 500)
+- notes: string (max 2000)
+
+## Bill (Billing)
+- patientId: ObjectId (Patient, required)
+- appointmentId: ObjectId (Appointment)
+- doctorFee: number (min 0)
+- medicineCharges: number (min 0)
+- labCharges: number (min 0)
+- totalAmount: number (min 0)
+- paymentStatus: enum ["pending", "paid"] (default: "pending")
+- paymentMethod: enum ["cash", "card", "upi"] (default: "cash")
+
+## InventoryTransaction
+- medicineId: ObjectId (Medicine, required)
+- type: enum ["stock_in", "stock_out"] (required)
+- quantity: number (min 1, required)
+- reason: string (max 200)
+- referenceId: ObjectId
